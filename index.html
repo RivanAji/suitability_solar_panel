@@ -215,7 +215,7 @@ function catOf(v){return CATS[catIdx(v)];}
 function colorFor(v){return catOf(v).color;}
 function txtFor(c){return c.dark?'#3a2f28':'#fff';}
 
-const map=L.map('map',{zoomControl:true,attributionControl:false,preferCanvas:true}).setView([-9.2,121.5],8);
+const map=L.map('map',{zoomControl:true,attributionControl:false,preferCanvas:true}).setView([-9.54, 122.27],8);
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png',{subdomains:'abcd',maxZoom:19}).addTo(map);
 
 let mode='map', activeIsland=null, selectedFid=null, filterKab=null, filterKec=null;
