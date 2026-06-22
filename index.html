@@ -215,8 +215,20 @@ function catOf(v){return CATS[catIdx(v)];}
 function colorFor(v){return catOf(v).color;}
 function txtFor(c){return c.dark?'#3a2f28':'#fff';}
 
-const map=L.map('map',{zoomControl:true,attributionControl:false,preferCanvas:true}).setView([-9.54, 122.27],8);
+const map=L.map('map',{zoomControl:true,attributionControl:false,preferCanvas:true});
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png',{subdomains:'abcd',maxZoom:19}).addTo(map);
+// auto-derive bounds from the GeoJSON so the map is always centered on the data
+const FULL_BOUNDS = L.geoJSON(GEO).getBounds();
+const FULL_CENTER = FULL_BOUNDS.getCenter();
+// fit, then nudge zoom up by 1 so the islands fill the viewport rather than floating in the middle
+function resetView(animate){
+  // Compute the optimal view directly from the GeoJSON bounds so the map is
+  // always centered on the dataset, regardless of viewport size.
+  const opt = {padding:[20,20]};
+  if(animate) map.flyToBounds(FULL_BOUNDS, {...opt, duration:.6});
+  else map.fitBounds(FULL_BOUNDS, opt);
+}
+resetView(false);
 
 let mode='map', activeIsland=null, selectedFid=null, filterKab=null, filterKec=null;
 const layersByFid={};
@@ -301,8 +313,8 @@ function setMode(m){
   document.getElementById('region-section').style.display=m==='region'?'block':'none';
   document.getElementById('island-section').style.display=m==='island'?'block':'none';
   document.getElementById('selbox').classList.remove('show');
-  if(m==='map'){activeIsland=null;filterKab=null;filterKec=null;restyle();map.setView([-9.2,121.5],8,{animate:true});}
-  else if(m==='region'){activeIsland=null;restyle();if(!filterKab)map.setView([-9.2,121.5],8,{animate:true});}
+  if(m==='map'){activeIsland=null;filterKab=null;filterKec=null;restyle();resetView(true);}
+  else if(m==='region'){activeIsland=null;restyle();if(!filterKab)resetView(true);}
   else if(m==='island'){filterKab=null;filterKec=null;if(activeIsland)updateIsland(activeIsland);else restyle();}
 }
 
