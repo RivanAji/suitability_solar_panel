@@ -241,7 +241,7 @@ const geoLayer=L.geoJSON(GEO,{
   onEachFeature:(f,lyr)=>{
     const p=f.properties; layersByFid[p.fid]=lyr;
     const c=catOf(p.mean);
-    lyr.bindPopup(`<div class="pop"><b>${p.desa}</b><div class="pm">${p.kec}, ${p.kab}</div><span class="pcat" style="background:${c.color};color:${txtFor(c)}">${c.label}</span></div>`);
+    lyr.bindPopup(`<div class="pop"><b>${p.desa}</b><div class="pm">${p.kec}, ${p.kab}</div><span class="pcat" style="background:${c.color};color:${txtFor(c)}">${c.label} · ${p.mean.toFixed(3)}</span></div>`);
     lyr.on('mouseover',()=>{const vis=mode==='map'||(mode==='island'&&p.island===activeIsland)||(mode==='region'&&filterKab===p.kab);
       if(vis&&p.fid!==selectedFid){lyr.setStyle({weight:1.5,color:'#2C2A27'});lyr.bringToFront();}});
     lyr.on('mouseout',()=>restyle());
@@ -289,7 +289,7 @@ function renderSelCard(fid){
   const p=layersByFid[fid].feature.properties;const c=catOf(p.mean);
   document.getElementById('selcard').innerHTML=
     `<h3>${p.desa}</h3><div class="meta">${p.kec}, ${p.kab} · ${p.island}</div>
-     <div class="catrow"><span class="catbig" style="background:${c.color};color:${txtFor(c)}">${c.label} suitability</span></div>`;
+     <div class="catrow"><span class="catbig" style="background:${c.color};color:${txtFor(c)}">${c.label} suitability</span> <span style="font-family:'Space Mono',monospace;font-weight:700;font-size:15px;color:var(--peach-deep);margin-left:8px;">${p.mean.toFixed(3)}</span></div>`;
   document.getElementById('selbox').classList.add('show');
   // selected village card only lives in map tab; in others rely on map highlight
 }
